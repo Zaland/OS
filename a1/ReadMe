@@ -1,0 +1,21 @@
+Compile the make file "make -f Makefile". This will compile the DSMS.c and prepare a DSMS 
+program. Compile stream.c as well to provide a stream of input for the DSMS ("gcc -o stream stream.c"). 
+
+The DSMS requires one parameter, a filename for a configuration file. This configuration file contains 5 
+options in this format, the init filename is optional:
+db database_name
+init file_name
+usr1 file_name
+usr2 file_name
+clean integer_value
+
+The stream requires 5 parameters before proceeding to start. They are in this order:
+input_file
+data_periodicity
+output_file
+interrupt_number
+DSMS_Process
+
+Run the DSMS first and a process ID will be printed out. Use that process ID for the stream program. Run 
+sql commands in the DSMS by preceeding all commands with the command exec. No function for exec at the 
+moment, future functionality incomming.
