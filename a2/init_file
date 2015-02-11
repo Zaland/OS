@@ -1,0 +1,4 @@
+create table stock ( ticker varchar(10), name varchar(30) );
+create table price ( id integer primary key autoincrement, ticker varchar(10), cost decimal);
+create table news ( id integer primary key autoincrement, ticker varchar(10), story_url varchar(255) );
+insert into stock values ("NNC", "Newbridge Networks Corporation"), ("IBM", "International Business Machines"), ("APPL", "Apple Corporation")
