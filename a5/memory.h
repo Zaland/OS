@@ -4,5 +4,6 @@
 int start_memory(int size);
 void end_memory(void);
 void *get_memory(int size);
+void release_memory(void *p);
 
 #endif

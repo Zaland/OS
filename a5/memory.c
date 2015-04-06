@@ -20,6 +20,7 @@ typedef struct node
 	int usage;
 	int memory_size;
 	struct node *next;
+	struct node *prev;
 	void *memory;
 } header_node;
 
@@ -166,6 +167,7 @@ void *get_memory(int size)
 		printf("Entered1\n");
 		temp = (header_node *)((int)(mem.memory) + sizeof(mem));
 		temp->next = NULL;
+		temp->prev = NULL;
 		temp->memory = (void *)((int)mem.memory + best_size);
 		temp->memory_size = best_size;
 		temp->usage = 1;
@@ -187,6 +189,9 @@ void *get_memory(int size)
 			temp = (header_node *)((int)curr + curr->memory_size + sizeof(header_node *));
 			temp->next = curr->next;
 			curr->next = temp;
+			if(curr->next != NULL)
+				curr->next->prev = temp;
+				
 			temp->memory = (void *)((int)mem.memory + best_size);
 			temp->memory_size = best_size;
 			temp->usage = 1;
@@ -209,6 +214,9 @@ void *get_memory(int size)
 			temp = (header_node *)((int)curr + curr->memory_size + sizeof(header_node *));
 			temp->next = curr->next;
 			curr->next = temp;
+			if(curr->next != NULL)
+				curr->next->prev = temp;
+				
 			temp->memory = (void *)((int)mem.memory + best_size);
 			temp->memory_size = best_size;
 			temp->usage = 1;
@@ -218,3 +226,25 @@ void *get_memory(int size)
 	return NULL;
 }
 
+
+/* Release memory partition referenced by pointer "p" back to free space. This function
+   sets the usage and removes the pointer from the list. */
+
+void release_memory(void *p)
+{
+	/* Confirm the memory block p if it is null or not. If the memory block is NULL, then
+	   the memory block is empty and return an error message to the screen. If the memory
+	   block is not NULL, then proceed to free the memory. */
+	
+	if(p != NULL)
+	{
+		header_node *temp = (header_node *)((int)p - sizeof(header_node));
+		header_node *curr = mem.head;
+		while(curr->next == p)
+			curr = curr->next;
+		printf("%d\n", curr->memory_size);
+	}
+	
+	else
+		printf("Memory block is empty\n");
+}
