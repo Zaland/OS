@@ -98,7 +98,7 @@ void end_memory(void)
 		if(curr->usage == 1)
 		{
 			counter++;
-			printf("Memory leak of %d bytes\n", curr->memory_size);
+			printf("Memory leak of %d bytes at %p\n", curr->memory_size, curr->memory);
 		}
 		//header_node *temp = curr;
 		curr = curr->next;
@@ -127,27 +127,17 @@ void end_memory(void)
    
 void *get_memory(int size)
 {
-	/* Perform checks to see if the amount of memory is suitable and if there is any
-	   memory left to allocate. First if statement checks for whether the size given
-	   is less than 1; not possible, return NULL. The second if statement checks the
-	   free_memory value to see if there is enough memory before proceeding. */
-	
+	/* Traverse through the block_size and find the appropriate size that matches the
+	   size that is given. Example: given size = 10, best size = 16. Also check to see
+	   if the size is larger than 1. After the best_size is found, check to see if the
+	   best_size can be allocated. */
+	  
 	if(size <= 0)
 	{
 		printf("The size requested is too small. Such a request is not possible.\n");
 		return NULL;
 	}
 	
-	if(size > (mem.free_memory - sizeof(header_node)))
-	{
-		printf("The size requested is larger than available. Such a request is not possible.\n");
-		return NULL;
-	}
-	
-	
-	/* Traverse through the block_size and find the appropriate size that matches the
-	   size that is given. Example: given size = 10, best size = 16. */
-	   
 	int best_size = 0, i;
 	for(i = 0; i < BLOCK_LENGTH; i++)
 	{
@@ -158,22 +148,73 @@ void *get_memory(int size)
 		}
 	}
 	
+	if(best_size > mem.free_memory)
+	{
+		printf("The size requested is larger than available. Such a request is not possible.\n");
+		return NULL;
+	}
 	
-	/* Check to see if there is any memory already allocated before. If not, then allocate
-	   space and point to another header. If already allocated, then just add another 
-	   header after the current header. */
+	
+	/* Check to see if there already is a head node for the list. If there isn't, then
+       proceed to set up the head node. If not, then proceed to add it to the end of
+	   the list. At the end of creating the node and referencing it, return the node. */
 	   
 	header_node *curr = mem.head;
 	header_node *temp;
 	if(curr == NULL)
 	{
+		printf("Entered1\n");
 		temp = (header_node *)((int)(mem.memory) + sizeof(mem));
-		//temp->next = NULL;
-		temp->memory = (void*)((int)mem.memory - 10);
-		//temp->memory_size = best_size;
-		//printf("%p %d %d\n", mem.memory, best_size, (int)temp->memory);
+		temp->next = NULL;
+		temp->memory = (void *)((int)mem.memory + best_size);
+		temp->memory_size = best_size;
+		temp->usage = 1;
+		mem.free_memory -= best_size;
+		mem.head = temp;
+		//printf("%p %p %d %d %d\n", mem.memory, temp->memory, best_size, mem.free_memory+best_size, mem.free_memory);
+		//printf("Allocated space of %d bytes\n\n", best_size);
 		return temp;
 	}
-	printf("%p\n", temp->memory);
+	
+	else
+	{
+		/* If there is only a header node then proceed to create a second node and link
+		   it to the head node and return the new node. */
+		   
+		if(curr->next == NULL)
+		{
+			printf("Entered2\n");
+			temp = (header_node *)((int)curr + curr->memory_size + sizeof(header_node *));
+			temp->next = curr->next;
+			curr->next = temp;
+			temp->memory = (void *)((int)mem.memory + best_size);
+			temp->memory_size = best_size;
+			temp->usage = 1;
+			return temp;
+		}
+		
+		
+		/* If there are other nodes besides the header node. Then proceed to add it to the
+		   end of the list. */
+		   
+		else
+		{
+			/* Loop through the nodes till we reach the latest node. Then create a node and
+			   set up the appropriate pointers to the previous node. */
+			
+			while(curr->next != NULL)
+				curr = curr->next;
+			
+			printf("Entered3\n");
+			temp = (header_node *)((int)curr + curr->memory_size + sizeof(header_node *));
+			temp->next = curr->next;
+			curr->next = temp;
+			temp->memory = (void *)((int)mem.memory + best_size);
+			temp->memory_size = best_size;
+			temp->usage = 1;
+			return temp;
+		}
+	}
+	return NULL;
 }
 

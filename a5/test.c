@@ -11,9 +11,11 @@ int main(int argc, char **argv)
 {
 	int return_value = 0;
 	
-	start_memory(20); 
+	start_memory(50); 
 	get_memory(10);
-	end_memory();
+	get_memory(2);
+	get_memory(2);
+	//end_memory();
 	
 	return return_value;
 }
