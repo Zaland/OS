@@ -101,7 +101,7 @@ void end_memory(void)
 		if(curr->usage == 1)
 		{
 			counter++;
-			printf("Memory leak of %d bytes at %p\n", curr->memory_size, curr->memory);
+			printf("Memory leak of %d bytes at %p\n", curr->memory_size, curr);
 		}
 		header_node *temp = curr;
 		curr = curr->next;

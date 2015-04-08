@@ -1,13 +1,15 @@
 CCFLAGS = -g
 
-test: test.o memory.o
-	gcc -o test test.o memory.o
+all: test1
+
+test1: test1.o memory.o
+	gcc -o test1 test1.o memory.o
 	
-test.o: test.c memory.h
-	gcc -c test.c
+test1.o: test1.c memory.h
+	gcc -c test1.c
 	
 memory.o: memory.c memory.h
 	gcc -c memory.c
 	
 clean:
-	-rm test.o memory.o
+	-rm test1.o memory.o
