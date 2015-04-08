@@ -25,6 +25,7 @@ int main(int argc, char **argv)
 	q = get_memory(2);
 	get_memory(24);
 	r = get_memory(10);
+	grow_memory(18, r);
 	
 	
 	/* Print the list that has already been created before releasing memory.
