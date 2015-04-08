@@ -1,12 +1,16 @@
-test1.c
+#Installation
 ----------------------------------------------------------------------------------------------
+hello > testing lelo
+
+#Test Cases
+----------------------------------------------------------------------------------------------
+###test1.c
 The first test case tests the working functions and the parts where it returns error messages.
 
 Firstly it starts the memory with a certain amount of size that could fit all the grow_memory
 functions to follow. One of the grow_memory functions is larger than it should be to return 
 an error message to make sure that it doesn't work. There are 4 nodes and 3 are filled in
-with the first node being the head, and the other two nodes are randomly chosen. The fourth
-node is empty to confirm its function when used.
+with the all nodes being randomly chosen. The fourth node is empty.
 
 Second, the test file will grow and pregrow memory with the already defined nodes. It will 
 try to grow and pregrow memory by a larger number and try to grow. Also try to grow an empty
@@ -23,8 +27,7 @@ was malloc'ed in the beginning.
 
 
 
-test2.c
-----------------------------------------------------------------------------------------------
+###test2.c
 The second test adds more get memory functions and doesn't test error messages.
 
 Firstly it starts the memory with a certain size that can fit all the get memory functions.
