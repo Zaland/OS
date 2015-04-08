@@ -1,5 +1,6 @@
 #Installation
-hello 'testing.c' lelo
+Clone to directory of preference and then run the makefile by executing `make -f Makefile`. 
+After to run the different test cases, use `./test1` or `./test2'.
 
 #Test Cases
 ###Test 1 (test1.c)
