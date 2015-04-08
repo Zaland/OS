@@ -1,9 +1,29 @@
+#About
+This is a memory manager made using the binary buddy system.
+
 #Installation
 Clone to directory of preference and then run the makefile by executing `make -f Makefile`. 
-After to run the different test cases, use `./test1` or `./test2'.
+Run `./test1` to run the first test case. Run `./test2` to run the second test case.
+
+#Structures
+###`struct node`
+This structure that is the header of memory blocks. Each new memory block includes this
+structure and also receives space. The usage variable is 0 when this memory block 
+is not in use. It will changed to 1 when the memory block is in use. The memory size
+variable holds the size of the memory block. The next and previous nodes are stored 
+here as well for traversing the memory blocks and for easier access to other nodes.
+
+###`struct memory_block`
+Structure that holds information about the memory blocks initialized. Holds the 
+base address of a block of memory, the size of the memory block, the amount 
+of free memory. A header_node is defined here that links to the start of the
+other nodes. A global structure is declared for use within this class. 
+
+#Functions
+
 
 #Test Cases
-###Test 1 (test1.c)
+###Test 1 (`test1.c`)
 The first test case tests the working functions and the parts where it returns error messages.
 
 Firstly it starts the memory with a certain amount of size that could fit all the grow_memory
@@ -26,7 +46,7 @@ was malloc'ed in the beginning.
 
 
 
-###Test 2 (test2.c)
+###Test 2 (`test2.c`)
 The second test adds more get memory functions and doesn't test error messages.
 
 Firstly it starts the memory with a certain size that can fit all the get memory functions.
