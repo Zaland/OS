@@ -11,7 +11,7 @@
 int main(int argc, char **argv)
 {
 	int return_value = 0;
-	void *p, *q, *r, *s;
+	void *p, *q, *r, *s, *t;
 	
 	
 	/* Start the memory and then start getting memory of various sizes. Some
@@ -22,13 +22,15 @@ int main(int argc, char **argv)
 	printf("start_memory, and get_memory\n");
 	printf("********************************\n\n");
 	start_memory(200); 
-	get_memory(10);
-	p = get_memory(4);
+	p = get_memory(10);
+	get_memory(4);
 	get_memory(2);
 	q = get_memory(2);
-	r = get_memory(24);
-	get_memory(10);
-	get_memory(200);
+	get_memory(24);
+	r = get_memory(1);
+	get_memory(30);
+	s = get_memory(6);
+	t = get_memory(10);
 	print(0);
 	
 	
@@ -43,6 +45,8 @@ int main(int argc, char **argv)
 	pregrow_memory(6, q);
 	print(0);
 	grow_memory(10, s);
+	print(0);
+	pregrow_memory(2, t);
 	print(0);
 	
 	
