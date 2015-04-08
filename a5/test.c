@@ -19,9 +19,11 @@ int main(int argc, char **argv)
 	get_memory(2);
 	get_memory(24);
 	p = get_memory(10);
-	print();
+	print(0);
+	print(1);
 	release_memory(p);
-	print();
+	print(2);
+	print(1);
 	//end_memory();
 	
 	return return_value;

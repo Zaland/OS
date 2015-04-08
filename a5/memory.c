@@ -279,10 +279,12 @@ void release_memory(void *p)
 }
 
 
-/* Print the list of the nodes using the memory_size. Prints in the forward direction and 
-   then prints in the opposite direction. For testing purposes. */
+/* For testing purposes. Prints in either the forward direction or backward direction
+   using either next or prev pointers. An int is accepted by this function to decide 
+   what the user wants. If num is 0, the proceed to only print forward. If num is 1,
+   then proceed to print backwards only. If num is 2, then print in both directions. */
 
-void print()
+void print(int num)
 {
 	/* If the header node is empty, then there is nothing to printing and notify the user
 	   that there is an error. */
@@ -298,35 +300,49 @@ void print()
 	
 	/* Prints the list by following the next pointers. These aren't ordered in any way, they
 	   are unordered. */
-	   
+	
 	printf("\nPrinting\n");
-	for(i = 0; i < mem.counter; i++)
+	if(num == 0 || num == 2)
 	{
-		printf("%d", curr->memory_size);
-		if(curr->next != NULL)
+		for(i = 0; i < mem.counter; i++)
 		{
-			printf(" -> ");
-			curr = curr->next;
+			printf("%d", curr->memory_size);
+			if(curr->next != NULL)
+			{
+				printf(" -> ");
+				curr = curr->next;
+			}
+			else
+				break;
 		}
-		else
-			break;
+		printf("\n");
 	}
-	printf("\n");
 	
 	
 	/* Prints the list by following the previous pointers. These aren't ordered in any way,
 	   instead they are unordered. */
-	   
-	for(i = 0; i < mem.counter; i++)
+	
+	if(num == 1 || num == 2)
 	{
-		printf("%d", curr->memory_size);
-		if(curr->prev != NULL)
+		for(i = 0; i < mem.counter; i++)
 		{
-			printf(" -> ");
-			curr = curr->prev;
+			if(curr->next != NULL)
+				curr = curr->next;
+			else
+				break;
 		}
-		else
-			break;
+		
+		for(i = 0; i < mem.counter; i++)
+		{
+			printf("%d", curr->memory_size);
+			if(curr->prev != NULL)
+			{
+				printf(" -> ");
+				curr = curr->prev;
+			}
+			else
+				break;
+		}
+		printf("\n");
 	}
-	printf("\n");
 }
