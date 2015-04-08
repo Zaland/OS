@@ -62,7 +62,7 @@ int start_memory(int size)
 	
 	mem.counter = 0;
 	mem.memory = NULL;
-	mem.memory = malloc(size);
+	mem.memory = malloc(size + 4);
 	if(mem.memory == NULL)
 	{
 		printf("Failed allocating memory\n");
@@ -121,7 +121,7 @@ void end_memory(void)
 		mem.head = NULL;
 		mem.memory_size = 0;
 		mem.free_memory = 0;
-		//free(mem.memory);
+		free(mem.memory);
 	}
 }
 
@@ -302,11 +302,38 @@ void *grow_memory(int size, void *p)
 {
 	/* First check to see if size is less than or equal to zero. This means that we need
 	   to release the memory instead of growing it. Release memory, then return NULL to 
-	   indicate that memory could not be grown. */
+	   indicate that memory could not be grown. Also check to see if the node is NULL. */
 	   
 	if(size <= 0)
 	{
 		release_memory(p);
+		return NULL;
+	}
+	
+	if((header_node *)p == NULL)
+	{
+		printf("Node empty, cannot grow.\n");
+		return NULL;
+	}
+	
+	
+	/* Find the best size size for the current size using the binary buddy system. 
+	   And check to see if there is enough room in free_memory to accomodate this
+	   size. */
+	
+	int best_size = 0, i;
+	for(i = 0; i < BLOCK_LENGTH; i++)
+	{
+		if(block_size[i] >= size)
+		{
+			best_size = block_size[i];
+			break;
+		}
+	}
+	
+	if(best_size > mem.free_memory)
+	{
+		printf("Not enough space to grow memory block %p.\n\n", (header_node *)p);
 		return NULL;
 	}
 	
@@ -316,11 +343,11 @@ void *grow_memory(int size, void *p)
 	   memory, then return the node. */
 	   
 	header_node *temp = (header_node *)p;
-	if(size > 0 && size < temp->memory_size)
+	if(best_size > 0 && best_size < temp->memory_size)
 	{
 		mem.free_memory += temp->memory_size;
-		mem.free_memory -= size;
-		temp->memory_size = size;
+		mem.free_memory -= best_size;
+		temp->memory_size = best_size;
 		return temp;
 	}
 	
@@ -335,16 +362,16 @@ void *grow_memory(int size, void *p)
 		   update the free_memory and memory_size of the node. Then return the node.
 		   Otherwise, return NULL and a message to notify that growing failed. */
 		   
-		if(size > mem.free_memory)
+		if(best_size < mem.free_memory)
 		{
-			mem.free_memory -= (size - temp->memory_size);
-			temp->memory_size = size;
+			mem.free_memory -= (best_size - temp->memory_size);
+			temp->memory_size = best_size;
 			return temp;
 		}
 		
 		else
 		{
-			printf("Not enough space to grow memory block.\n");
+			printf("Not enough space to grow memory block %p.\n\n", temp);
 			return NULL;
 		}
 	}
@@ -356,7 +383,7 @@ void *grow_memory(int size, void *p)
    
 void *pregrow_memory(int size, void *p)
 {
-	/* First check to see if size is less than or equal to zero. This means that we need
+		/* First check to see if size is less than or equal to zero. This means that we need
 	   to release the memory instead of growing it. Release memory, then return NULL to 
 	   indicate that memory could not be grown. */
 	   
@@ -367,16 +394,37 @@ void *pregrow_memory(int size, void *p)
 	}
 	
 	
+	/* Find the best size size for the current size using the binary buddy system. 
+	   And check to see if there is enough room in free_memory to accomodate this
+	   size. */
+	
+	int best_size = 0, i;
+	for(i = 0; i < BLOCK_LENGTH; i++)
+	{
+		if(block_size[i] >= size)
+		{
+			best_size = block_size[i];
+			break;
+		}
+	}
+	
+	if(best_size > mem.free_memory)
+	{
+		printf("Not enough space to grow memory block %p.\n\n", (header_node *)p);
+		return NULL;
+	}
+	
+	
 	/* If the size is smaller than what is already defined, then all that needs to be
 	   updates is the memory_size variable in the node. Also update the value of free
 	   memory, then return the node. */
 	   
 	header_node *temp = (header_node *)p;
-	if(size > 0 && size < temp->memory_size)
+	if(best_size > 0 && best_size < temp->memory_size)
 	{
 		mem.free_memory += temp->memory_size;
-		mem.free_memory -= size;
-		temp->memory_size = size;
+		mem.free_memory -= best_size;
+		temp->memory_size = best_size;
 		return temp;
 	}
 	
@@ -389,20 +437,19 @@ void *pregrow_memory(int size, void *p)
 		/* Confirm whether there is enough room in free_memory to allocate the extra
 		   space for this memory block. If there is enough room in free_memory, then
 		   update the free_memory and memory_size of the node. Then return the node.
-		   Otherwise, return NULL and a message to notify that growing failed. In
-		   pregrow_memory, redefine the memory to be added before the partition. */
+		   Otherwise, return NULL and a message to notify that growing failed. */
 		   
-		if(size > mem.free_memory)
+		if(best_size < mem.free_memory)
 		{
+			mem.free_memory -= (best_size - temp->memory_size);
+			temp->memory_size = best_size;
 			temp = (header_node *)(temp->memory_size + (int)temp + sizeof(header_node));
-			mem.free_memory -= (size - temp->memory_size);
-			temp->memory_size = size;
 			return temp;
 		}
 		
 		else
 		{
-			printf("Not enough space to grow memory block.\n");
+			printf("Not enough space to grow memory block %p.\n\n", temp);
 			return NULL;
 		}
 	}
@@ -474,4 +521,5 @@ void print(int num)
 		}
 		printf("\n");
 	}
+	printf("\n");
 }
