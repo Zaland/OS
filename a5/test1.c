@@ -28,6 +28,7 @@ int main(int argc, char **argv)
 	q = get_memory(2);
 	get_memory(24);
 	r = get_memory(10);
+	get_memory(200);
 	print(0);
 	
 	
@@ -68,5 +69,6 @@ int main(int argc, char **argv)
 	printf("end_memory\n");
 	printf("********************************\n\n");
 	end_memory();
+	
 	return return_value;
 }
