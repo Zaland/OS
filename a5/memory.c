@@ -91,7 +91,8 @@ void end_memory(void)
 {
 	/* Traverse through the header_nodes and see if any of the usage is still set to 1.
 	   If so, then there is a memory leak. Print this memory leak to the screen and
-	   release the memory. The counter keeps track of whether there were any leaks. */
+	   release the memory. The counter keeps track of whether there were any leaks. 
+	   If counter equals 0, then there were no memory leaks. */
 	   
 	int counter = 0;
 	header_node *curr = mem.head;
@@ -103,8 +104,9 @@ void end_memory(void)
 			counter++;
 			printf("Memory leak of %d bytes at %p\n", curr->memory_size, curr->memory);
 		}
-		//header_node *temp = curr;
+		header_node *temp = curr;
 		curr = curr->next;
+		release_memory((void *)temp);
 	}
 	
 	if(counter == 0)
@@ -120,7 +122,7 @@ void end_memory(void)
 		mem.head = NULL;
 		mem.memory_size = 0;
 		mem.free_memory = 0;
-		free(mem.memory);
+		//free(mem.memory);
 	}
 }
 
@@ -266,7 +268,8 @@ void release_memory(void *p)
 		   to finish the releasing of node. Also, at the end check to see if the node is 
 		   NULL. If it's not NULL, then releasing the memory failed and notify the user
 		   that memory was not released. */
-		   
+		
+		printf("Released memory of %d bytes at %p\n", temp->memory_size, temp);
 		temp->memory_size = 0;
 		temp->next = NULL;
 		temp->prev = NULL;

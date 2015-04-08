@@ -24,7 +24,7 @@ int main(int argc, char **argv)
 	release_memory(p);
 	print(2);
 	print(1);
-	//end_memory();
+	end_memory();
 	
 	return return_value;
 }
