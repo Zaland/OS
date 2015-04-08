@@ -13,7 +13,8 @@ is not in use. It will changed to 1 when the memory block is in use. The memory 
 variable holds the size of the memory block. The next and previous nodes are stored 
 here as well for traversing the memory blocks and for easier access to other nodes.
 
-#####`struct memory_block`
+
+#####`**struct memory_block**`
 Structure that holds information about the memory blocks initialized. Holds the 
 base address of a block of memory, the size of the memory block, the amount 
 of free memory. A header_node is defined here that links to the start of the
