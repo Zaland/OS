@@ -35,6 +35,7 @@ typedef struct
 	void *memory;
 	int memory_size;
 	int free_memory;
+	int counter;
 	header_node *head;
 } memory_block;
 memory_block mem;
@@ -59,6 +60,7 @@ int start_memory(int size)
 	   before proceeding any further. If the block of space could not be allocated, then
 	   return a 1 and print to the screen that space could not be allocated. */
 	
+	mem.counter = 0;
 	mem.memory = NULL;
 	mem.memory = malloc(size);
 	if(mem.memory == NULL)
@@ -164,8 +166,8 @@ void *get_memory(int size)
 	header_node *temp;
 	if(curr == NULL)
 	{
-		printf("Entered1\n");
 		temp = (header_node *)((int)(mem.memory) + sizeof(mem));
+		//temp = malloc((int)mem.memory + sizeof(mem));
 		temp->next = NULL;
 		temp->prev = NULL;
 		temp->memory = (void *)((int)mem.memory + best_size);
@@ -173,8 +175,7 @@ void *get_memory(int size)
 		temp->usage = 1;
 		mem.free_memory -= best_size;
 		mem.head = temp;
-		//printf("%p %p %d %d %d\n", mem.memory, temp->memory, best_size, mem.free_memory+best_size, mem.free_memory);
-		//printf("Allocated space of %d bytes\n\n", best_size);
+		mem.counter++;
 		return temp;
 	}
 	
@@ -185,16 +186,15 @@ void *get_memory(int size)
 		   
 		if(curr->next == NULL)
 		{
-			printf("Entered2\n");
 			temp = (header_node *)((int)curr + curr->memory_size + sizeof(header_node *));
+			//temp = malloc((int)curr + curr->memory_size + sizeof(header_node));
 			temp->next = curr->next;
+			temp->prev = curr;
 			curr->next = temp;
-			if(curr->next != NULL)
-				curr->next->prev = temp;
-				
 			temp->memory = (void *)((int)mem.memory + best_size);
 			temp->memory_size = best_size;
 			temp->usage = 1;
+			mem.counter++;
 			return temp;
 		}
 		
@@ -203,23 +203,26 @@ void *get_memory(int size)
 		   end of the list. */
 		   
 		else
-		{
-			/* Loop through the nodes till we reach the latest node. Then create a node and
-			   set up the appropriate pointers to the previous node. */
+		{			
+			while(curr != NULL)
+			{
+				if(curr->next != NULL)
+					curr = curr->next;
+				else
+					break;			
+			}
+			printf("End\n");
 			
-			while(curr->next != NULL)
-				curr = curr->next;
-			
-			printf("Entered3\n");
-			temp = (header_node *)((int)curr + curr->memory_size + sizeof(header_node *));
+			temp = (header_node *)((int)curr + curr->memory_size + sizeof(header_node));
+			//temp = malloc((int)curr + curr->memory_size + sizeof(header_node));
+			printf("lel\n");
 			temp->next = curr->next;
-			curr->next = temp;
-			if(curr->next != NULL)
-				curr->next->prev = temp;
-				
+			temp->prev = curr;
+			curr->next = temp;		
 			temp->memory = (void *)((int)mem.memory + best_size);
 			temp->memory_size = best_size;
 			temp->usage = 1;
+			mem.counter++;
 			return temp;
 		}
 	}
@@ -227,24 +230,44 @@ void *get_memory(int size)
 }
 
 
-/* Release memory partition referenced by pointer "p" back to free space. This function
-   sets the usage and removes the pointer from the list. */
+/* Print the list of the nodes using the memory_size. Prints in the forward direction and 
+   then prints in the opposite direction. For testing purposes. */
 
-void release_memory(void *p)
+void print()
 {
-	/* Confirm the memory block p if it is null or not. If the memory block is NULL, then
-	   the memory block is empty and return an error message to the screen. If the memory
-	   block is not NULL, then proceed to free the memory. */
-	
-	if(p != NULL)
+	header_node *curr = mem.head;
+	int i;
+	if(curr == NULL)
 	{
-		header_node *temp = (header_node *)((int)p - sizeof(header_node));
-		header_node *curr = mem.head;
-		while(curr->next == p)
-			curr = curr->next;
-		printf("%d\n", curr->memory_size);
+		printf("Error printing\n");
+		return NULL;
 	}
 	
-	else
-		printf("Memory block is empty\n");
+	printf("\nPrinting\n");
+	for(i = 0; i < mem.counter; i++)
+	{
+		printf("%d", curr->memory_size);
+		if(curr->next != NULL)
+		{
+			printf(" -> ");
+			curr = curr->next;
+		}
+		else
+			break;
+	}
+	printf("\n");
+	
+	for(i = 0; i < mem.counter; i++)
+	{
+		printf("%d", curr->memory_size);
+		if(curr->prev != NULL)
+		{
+			printf(" -> ");
+			curr = curr->prev;
+		}
+		else
+			break;
+	}
+	printf("\n");
 }
+
