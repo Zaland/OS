@@ -13,15 +13,49 @@ is not in use. It will changed to 1 when the memory block is in use. The memory 
 variable holds the size of the memory block. The next and previous nodes are stored 
 here as well for traversing the memory blocks and for easier access to other nodes.
 
-
-#####`**struct memory_block**`
+#####`struct memory_block`
 Structure that holds information about the memory blocks initialized. Holds the 
 base address of a block of memory, the size of the memory block, the amount 
 of free memory. A header_node is defined here that links to the start of the
 other nodes. A global structure is declared for use within this class. 
 
 #Functions
+#####`int start_memory(int size)`
+Initialization for the memory module. The program will only be allowed to access
+"size" bytes of memory. A program will only call this function once (in the
+beginning of the program). A return value of 1 means no errors occurred while
+setting up the memory module. A return value of 0 means that some error occurred
+and the user can take certain actions.
 
+#####`void end_memory`
+Task-ending operations that the memory module requires. This function will also
+print out which memory blocks leaked; memory is leaked when the process ends and
+there was still some memory from a get_memory, grow_memory, or pregrow_memory call
+that wasn't released with release_memory. A program will only call this function
+once (at the end of the program).
+
+#####`void *get_memory(int size)`
+Allocate a memory partition with "size" bytes in it. Return a pointer to the memory 
+space or a value of NULL if there is no space.
+
+#####`void release_memory(void *p)`
+Release memory partition referenced by pointer "p" back to free space. This function
+sets the usage and removes the pointer from the list.
+
+#####`void *grow_memory(int size, void *p)`
+Try to grow the memory partition referenced by memory "p" so that it uses "size" bytes
+with extra space allocated at the end of the current block of memory. Return a value
+of NULL if you cannot grow the space and a pointer to the grown space if you could grow the space.
+
+#####`void *pregrow_memory(int size, void *p)`
+The same as grow_memory except that any extra space is allocated at the front of the
+partition.
+
+#####`void print(int num)`
+For testing purposes. Prints in either the forward direction or backward direction
+using either next or prev pointers. An int is accepted by this function to decide 
+what the user wants. If num is 0, the proceed to only print forward. If num is 1,
+then proceed to print backwards only. If num is 2, then print in both directions.
 
 #Test Cases
 #####Test 1 (`test1.c`)
