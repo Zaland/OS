@@ -1,10 +1,8 @@
 #Installation
-----------------------------------------------------------------------------------------------
-hello > testing lelo
+hello 'testing.c' lelo
 
 #Test Cases
-----------------------------------------------------------------------------------------------
-###test1.c
+###Test 1 (test1.c)
 The first test case tests the working functions and the parts where it returns error messages.
 
 Firstly it starts the memory with a certain amount of size that could fit all the grow_memory
@@ -27,7 +25,7 @@ was malloc'ed in the beginning.
 
 
 
-###test2.c
+###Test 2 (test2.c)
 The second test adds more get memory functions and doesn't test error messages.
 
 Firstly it starts the memory with a certain size that can fit all the get memory functions.
