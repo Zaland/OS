@@ -243,7 +243,7 @@ void release_memory(void *p)
 	   block is not NULL, then proceed to free the memory. At the end set p to NULL. */
 	
 	if(p == NULL)
-		printf("Memory block is empty\n");
+		printf("\nMemory block is empty\n\n");
 		
 	if(p != NULL)
 	{		
@@ -251,7 +251,10 @@ void release_memory(void *p)
 		   node then proceed to setting the temp's next pointer to the previous node's next
 		   pointer.
 		   
-		   The second if statement checks to see if temp is not the last node. If temp is
+		   Second if statement checks to see if the node is the head. Set the next node's
+		   previous pointer to NULL and set the mem.head to the next node.
+		   
+		   The third if statement checks to see if temp is not the last node. If temp is
 		   not the last node, then proceed to setting temp's previous pointer to the next
 		   node's previous pointer. */
 		
@@ -260,8 +263,15 @@ void release_memory(void *p)
 		if(temp->prev != NULL)
 			temp->prev->next = temp->next;
 		
-		if(temp->next != NULL)
+		if(temp->prev == NULL && temp->next != NULL)
+		{
+			temp->next->prev = NULL;
+			mem.head = temp->next;
+		}
+		
+		else if(temp->next != NULL)
 			temp->next->prev = temp->prev;
+		
 		
 		/* Set the memory_size to 0. Set the next and previous pointers to NULL. Set the
 		   usage to 0 to confirm that it's finished. Finally set the node itself to NULL
@@ -269,12 +279,13 @@ void release_memory(void *p)
 		   NULL. If it's not NULL, then releasing the memory failed and notify the user
 		   that memory was not released. */
 		
-		printf("Released memory of %d bytes at %p\n", temp->memory_size, temp);
+		printf("Released memory of %d bytes at %p\n\n", temp->memory_size, temp);
 		temp->memory_size = 0;
 		temp->next = NULL;
 		temp->prev = NULL;
 		temp->usage = 0;
 		temp = NULL;
+		mem.counter--;
 		if(temp != NULL)
 			printf("Failed to release memory.\n");
 	}
@@ -304,7 +315,6 @@ void print(int num)
 	/* Prints the list by following the next pointers. These aren't ordered in any way, they
 	   are unordered. */
 	
-	printf("\nPrinting\n");
 	if(num == 0 || num == 2)
 	{
 		for(i = 0; i < mem.counter; i++)

@@ -29,7 +29,7 @@ int main(int argc, char **argv)
 	
 	/* Print the list that has already been created before releasing memory.
 	   After releasing, print the list again to see the change. Also test
-	   removing one that is NULL. */
+	   removing one that is NULL. Test for removing head node is also included. */
 	   
 	print(0);
 	release_memory(p);
@@ -44,6 +44,5 @@ int main(int argc, char **argv)
 	/* Finally run the end_memory function to clean up the memory. */
 	
 	end_memory();
-	
 	return return_value;
 }
