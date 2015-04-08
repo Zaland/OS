@@ -14,11 +14,11 @@ int main(int argc, char **argv)
 	
 	start_memory(50); 
 	get_memory(10);
-	//void *p = get_memory(2);
 	get_memory(4);
 	get_memory(2);
 	p = get_memory(2);
-	get_memory(5);
+	get_memory(24);
+	get_memory(10);
 	print();
 	//release_memory(p);
 	//end_memory();

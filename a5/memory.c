@@ -156,6 +156,7 @@ void *get_memory(int size)
 		printf("The size requested is larger than available. Such a request is not possible.\n");
 		return NULL;
 	}
+	printf("%d %d\n", best_size, mem.free_memory);
 	
 	
 	/* Check to see if there already is a head node for the list. If there isn't, then
@@ -167,7 +168,6 @@ void *get_memory(int size)
 	if(curr == NULL)
 	{
 		temp = (header_node *)((int)(mem.memory) + sizeof(mem));
-		//temp = malloc((int)mem.memory + sizeof(mem));
 		temp->next = NULL;
 		temp->prev = NULL;
 		temp->memory = (void *)((int)mem.memory + best_size);
@@ -182,17 +182,18 @@ void *get_memory(int size)
 	else
 	{
 		/* If there is only a header node then proceed to create a second node and link
-		   it to the head node and return the new node. */
+		   it to the head node and return the new node. Sets up the values of the current
+		   node including its pointers.*/
 		   
 		if(curr->next == NULL)
 		{
-			temp = (header_node *)((int)curr + curr->memory_size + sizeof(header_node *));
-			//temp = malloc((int)curr + curr->memory_size + sizeof(header_node));
+			temp = (header_node *)((int)curr + curr->memory_size + sizeof(header_node));
 			temp->next = curr->next;
 			temp->prev = curr;
 			curr->next = temp;
 			temp->memory = (void *)((int)mem.memory + best_size);
 			temp->memory_size = best_size;
+			mem.free_memory -= best_size;
 			temp->usage = 1;
 			mem.counter++;
 			return temp;
@@ -200,7 +201,9 @@ void *get_memory(int size)
 		
 		
 		/* If there are other nodes besides the header node. Then proceed to add it to the
-		   end of the list. */
+		   end of the list. Firstly, it iterates through all the nodes to get to the most
+		   recent node. Then it sets up the values of the current node including its 
+		   pointers. */
 		   
 		else
 		{			
@@ -211,16 +214,14 @@ void *get_memory(int size)
 				else
 					break;			
 			}
-			printf("End\n");
 			
 			temp = (header_node *)((int)curr + curr->memory_size + sizeof(header_node));
-			//temp = malloc((int)curr + curr->memory_size + sizeof(header_node));
-			printf("lel\n");
 			temp->next = curr->next;
 			temp->prev = curr;
 			curr->next = temp;		
 			temp->memory = (void *)((int)mem.memory + best_size);
 			temp->memory_size = best_size;
+			mem.free_memory -= best_size;
 			temp->usage = 1;
 			mem.counter++;
 			return temp;
@@ -235,6 +236,9 @@ void *get_memory(int size)
 
 void print()
 {
+	/* If the header node is empty, then there is nothing to printing and notify the user
+	   that there is an error. */
+	   
 	header_node *curr = mem.head;
 	int i;
 	if(curr == NULL)
@@ -243,6 +247,10 @@ void print()
 		return NULL;
 	}
 	
+	
+	/* Prints the list by following the next pointers. These aren't ordered in any way, they
+	   are unordered. */
+	   
 	printf("\nPrinting\n");
 	for(i = 0; i < mem.counter; i++)
 	{
@@ -257,6 +265,10 @@ void print()
 	}
 	printf("\n");
 	
+	
+	/* Prints the list by following the previous pointers. These aren't ordered in any way,
+	   instead they are unordered. */
+	   
 	for(i = 0; i < mem.counter; i++)
 	{
 		printf("%d", curr->memory_size);
@@ -271,3 +283,56 @@ void print()
 	printf("\n");
 }
 
+
+/* Release memory partition referenced by pointer "p" back to free space. This function
+   sets the usage and removes the pointer from the list. */
+
+void release_memory(void *p)
+{
+	/* Confirm the memory block p if it is null or not. If the memory block is NULL, then
+	   the memory block is empty and return an error message to the screen. If the memory
+	   block is not NULL, then proceed to free the memory. At the end set p to NULL. */
+	
+	if(p == NULL)
+		printf("Memory block is empty\n");
+		
+	if(p != NULL)
+	{		
+		/* First if statement is if temp is not the first node. If temp is not the first
+		   node then proceed to setting the temp's next pointer to the previous node's next
+		   pointer.
+		   
+		   The second if statement checks to see if temp is not the last node. If temp is
+		   not the last node, then proceed to setting temp's previous pointer to the next
+		   node's previous pointer. */
+		
+		header_node *temp = (header_node *)((int)p - sizeof(header_node));
+
+		if(temp->prev != NULL)
+		{
+			header_node *m = temp->prev;
+			printf("Yellow\n");
+			
+			m->next = temp->next;
+		}
+		printf("Yellow\n");
+		if(temp->next != NULL)
+			temp->next->prev = temp->prev;
+		printf("Yellow\n");	
+		
+		/* Set the memory_size to 0. Set the next and previous pointers to NULL. Set the
+		   usage to 0 to confirm that it's finished. Finally set the node itself to NULL
+		   to finish the releasing of node. Also, at the end check to see if the node is 
+		   NULL. If it's not NULL, then releasing the memory failed and notify the user
+		   that memory was not released. */
+		   
+		temp->memory_size = 0;
+		temp->next = NULL;
+		temp->prev = NULL;
+		temp->usage = 0;
+		temp = NULL;
+		if(temp != NULL)
+			printf("Failed to release memory.\n");
+	}
+	p = NULL;
+}
