@@ -231,6 +231,54 @@ void *get_memory(int size)
 }
 
 
+/* Release memory partition referenced by pointer "p" back to free space. This function
+   sets the usage and removes the pointer from the list. */
+
+void release_memory(void *p)
+{
+	/* Confirm the memory block p if it is null or not. If the memory block is NULL, then
+	   the memory block is empty and return an error message to the screen. If the memory
+	   block is not NULL, then proceed to free the memory. At the end set p to NULL. */
+	
+	if(p == NULL)
+		printf("Memory block is empty\n");
+		
+	if(p != NULL)
+	{		
+		/* First if statement is if temp is not the first node. If temp is not the first
+		   node then proceed to setting the temp's next pointer to the previous node's next
+		   pointer.
+		   
+		   The second if statement checks to see if temp is not the last node. If temp is
+		   not the last node, then proceed to setting temp's previous pointer to the next
+		   node's previous pointer. */
+		
+		header_node *temp = (header_node *)p;
+
+		if(temp->prev != NULL)
+			temp->prev->next = temp->next;
+		
+		if(temp->next != NULL)
+			temp->next->prev = temp->prev;
+		
+		/* Set the memory_size to 0. Set the next and previous pointers to NULL. Set the
+		   usage to 0 to confirm that it's finished. Finally set the node itself to NULL
+		   to finish the releasing of node. Also, at the end check to see if the node is 
+		   NULL. If it's not NULL, then releasing the memory failed and notify the user
+		   that memory was not released. */
+		   
+		temp->memory_size = 0;
+		temp->next = NULL;
+		temp->prev = NULL;
+		temp->usage = 0;
+		temp = NULL;
+		if(temp != NULL)
+			printf("Failed to release memory.\n");
+	}
+	p = NULL;
+}
+
+
 /* Print the list of the nodes using the memory_size. Prints in the forward direction and 
    then prints in the opposite direction. For testing purposes. */
 
@@ -281,58 +329,4 @@ void print()
 			break;
 	}
 	printf("\n");
-}
-
-
-/* Release memory partition referenced by pointer "p" back to free space. This function
-   sets the usage and removes the pointer from the list. */
-
-void release_memory(void *p)
-{
-	/* Confirm the memory block p if it is null or not. If the memory block is NULL, then
-	   the memory block is empty and return an error message to the screen. If the memory
-	   block is not NULL, then proceed to free the memory. At the end set p to NULL. */
-	
-	if(p == NULL)
-		printf("Memory block is empty\n");
-		
-	if(p != NULL)
-	{		
-		/* First if statement is if temp is not the first node. If temp is not the first
-		   node then proceed to setting the temp's next pointer to the previous node's next
-		   pointer.
-		   
-		   The second if statement checks to see if temp is not the last node. If temp is
-		   not the last node, then proceed to setting temp's previous pointer to the next
-		   node's previous pointer. */
-		
-		header_node *temp = (header_node *)((int)p - sizeof(header_node));
-
-		if(temp->prev != NULL)
-		{
-			header_node *m = temp->prev;
-			printf("Yellow\n");
-			
-			m->next = temp->next;
-		}
-		printf("Yellow\n");
-		if(temp->next != NULL)
-			temp->next->prev = temp->prev;
-		printf("Yellow\n");	
-		
-		/* Set the memory_size to 0. Set the next and previous pointers to NULL. Set the
-		   usage to 0 to confirm that it's finished. Finally set the node itself to NULL
-		   to finish the releasing of node. Also, at the end check to see if the node is 
-		   NULL. If it's not NULL, then releasing the memory failed and notify the user
-		   that memory was not released. */
-		   
-		temp->memory_size = 0;
-		temp->next = NULL;
-		temp->prev = NULL;
-		temp->usage = 0;
-		temp = NULL;
-		if(temp != NULL)
-			printf("Failed to release memory.\n");
-	}
-	p = NULL;
 }

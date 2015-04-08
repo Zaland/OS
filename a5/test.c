@@ -16,11 +16,12 @@ int main(int argc, char **argv)
 	get_memory(10);
 	get_memory(4);
 	get_memory(2);
-	p = get_memory(2);
+	get_memory(2);
 	get_memory(24);
-	get_memory(10);
+	p = get_memory(10);
 	print();
-	//release_memory(p);
+	release_memory(p);
+	print();
 	//end_memory();
 	
 	return return_value;
